@@ -8,5 +8,3 @@ class TodoData{
 
   TodoData({required this.name, required this.dueDate, required this.dueTime});
 }
-
-List<TodoData> taskData = [];

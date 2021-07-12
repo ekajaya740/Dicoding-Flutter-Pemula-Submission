@@ -1,4 +1,3 @@
-import 'package:dicoding_submission/greeting_screen.dart';
 import 'package:dicoding_submission/todo_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

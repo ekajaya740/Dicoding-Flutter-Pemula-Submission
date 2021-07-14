@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,28 +7,33 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:intl/intl.dart';
 import 'package:dicoding_submission/todo_data.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TodoScreen extends StatefulWidget {
+  TodoScreen({Key? key}) : super(key:key);
   @override
   State<StatefulWidget> createState() => _TodoScreen();
 }
 
 class _TodoScreen extends State<TodoScreen> {
-  String _listName = 'My Task';
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final GlobalKey<AnimatedListState> _animatedListKey =
+  late SharedPreferences sharedPreferences;
+  static const String sharedPreferencesKey = 'save_task';
+  final dateTimeNow = new DateTime.now();
+  late String _listName = 'My Task';
+  late final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  late final GlobalKey<AnimatedListState> _animatedListKey =
       new GlobalKey<AnimatedListState>();
-  TextEditingController _taskNameController = new TextEditingController();
-  DateTime? _dueDate = null;
+  late TextEditingController _taskNameController = new TextEditingController();
+  DateTime? _dueDate;
   static const String _dueDateStr = 'Due Date';
-  TimeOfDay? _dueTime = null;
+  TimeOfDay? _dueTime;
   static const String _dueTimeStr = 'Due Time';
-  String taskName = '';
-  List<TodoData> _taskData = [];
+  late String taskName = '';
+  late List<TodoData> _taskData = [];
 
-  final TextStyle _myTextFieldStyle =
+  late final TextStyle _myTextFieldStyle =
       TextStyle(color: Colors.black, fontSize: 16);
-  final InputDecoration _myTextFieldInputDecoration = InputDecoration(
+  late final InputDecoration _myTextFieldInputDecoration = InputDecoration(
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide(
@@ -34,23 +41,49 @@ class _TodoScreen extends State<TodoScreen> {
         ),
       ),
       contentPadding: const EdgeInsets.all(8));
-  final ButtonStyle _dueButtonStyle = ButtonStyle(
+  late final ButtonStyle _dueButtonStyle = ButtonStyle(
       padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(14)),
       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
               side: BorderSide(width: 1),
               borderRadius: BorderRadius.circular(16))));
-  final ButtonStyle _saveButtonStyle = ButtonStyle(
+  late final ButtonStyle _saveButtonStyle = ButtonStyle(
       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))));
 
-  final TextStyle _dateTimeFormatTextStyle =
+  late final TextStyle _dateTimeFormatTextStyle =
       TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w300);
 
-  final TextStyle _deleteConfirmationDescTextStyle =
+  late final TextStyle _deleteConfirmationDescTextStyle =
       TextStyle(color: Colors.white, fontWeight: FontWeight.bold);
-  final TextStyle _alertTitleStyle =
+  late final TextStyle _alertTitleStyle =
       TextStyle(fontWeight: FontWeight.w600, fontSize: 24, color: Colors.black);
+
+
+  void initState(){
+    loadSharedPreferencesAndData();
+    super.initState();
+  }
+
+  void loadSharedPreferencesAndData() async{
+    sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.clear();
+    loadData();
+  }
+
+  void saveData(){
+    List<String> saved = _taskData.map((e) => json.encode(e.toMap())).toList();
+    sharedPreferences.setStringList(sharedPreferencesKey, saved);
+    print(saved);
+  }
+
+  void loadData(){
+    List<String>? savedData = sharedPreferences.getStringList(sharedPreferencesKey);
+    if(savedData != null){
+      _taskData = savedData.map((e) => TodoData.fromMap(json.decode(e))).toList();
+      setState(() {});
+    }
+  }
 
   Future<Null> _pickDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -169,20 +202,22 @@ class _TodoScreen extends State<TodoScreen> {
                               width: double.infinity,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  if (_taskNameController.text != null &&
-                                      _dueDate != null &&
+                                  if (_dueDate != null &&
                                       _dueTime != null) {
                                     setState(() {
                                       TodoData todoData = new TodoData(
                                           name: _taskNameController.text
                                               .toString(),
-                                          dueDate: _dueDate!,
-                                          dueTime: _dueTime!);
+                                          dueDate: DateFormat.yMEd()
+                                              .format(_dueDate!)
+                                              .toString(),
+                                          dueTime: DateFormat.jm().format(new DateTime(dateTimeNow.year, dateTimeNow.month, dateTimeNow.day, _dueTime!.hour, _dueTime!.minute)));
                                       _taskData.add(todoData);
                                       _animatedListKey.currentState!.insertItem(
                                           _taskData.length - 1,
                                           duration: const Duration(
                                               milliseconds: 500));
+                                      saveData();
 
                                       Navigator.pop(context);
                                     });
@@ -339,14 +374,17 @@ class _TodoScreen extends State<TodoScreen> {
                               width: double.infinity,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  if (_taskNameController.text != null &&
-                                      _dueDate != null &&
+                                  if (_dueDate != null &&
                                       _dueTime != null) {
                                     setState(() {
                                       todoData.name =
                                           _taskNameController.text.toString();
-                                      todoData.dueDate = _dueDate!;
-                                      todoData.dueTime = _dueTime!;
+                                      todoData.dueDate = DateFormat.yMEd()
+                                          .format(_dueDate!)
+                                          .toString();
+                                      todoData.dueTime = DateFormat.jm().format(new DateTime(dateTimeNow.year, dateTimeNow.month, dateTimeNow.day, _dueTime!.hour, _dueTime!.minute));
+                                      todoData.isComplete = false;
+                                      saveData();
 
                                       Navigator.pop(context);
                                     });
@@ -406,6 +444,7 @@ class _TodoScreen extends State<TodoScreen> {
                                                                 milliseconds:
                                                                     500));
                                                 _taskData.remove(todoData);
+                                                saveData();
                                                 Navigator.pop(context);
                                                 Navigator.pop(context);
                                               });
@@ -467,9 +506,11 @@ class _TodoScreen extends State<TodoScreen> {
                                   if (todoData.isComplete) {
                                     _taskData.remove(todoData);
                                     _taskData.add(tempTodoData);
+                                    saveData();
                                   } else {
                                     _taskData.remove(todoData);
                                     _taskData.insert(0, tempTodoData);
+                                    saveData();
                                   }
                                 });
                               },
@@ -500,9 +541,7 @@ class _TodoScreen extends State<TodoScreen> {
                                           margin: const EdgeInsets.only(
                                               left: 4, top: 4),
                                           child: Text(
-                                              DateFormat.yMEd()
-                                                  .format(todoData.dueDate)
-                                                  .toString(),
+                                              todoData.dueDate,
                                               style: _dateTimeFormatTextStyle)),
                                       Icon(
                                         Icons.circle,
@@ -513,9 +552,7 @@ class _TodoScreen extends State<TodoScreen> {
                                           margin:
                                               const EdgeInsets.only(left: 4),
                                           child: Text(
-                                              todoData.dueTime
-                                                  .format(context)
-                                                  .toString(),
+                                              todoData.dueTime.toString(),
                                               style: _dateTimeFormatTextStyle))
                                     ],
                                   ))

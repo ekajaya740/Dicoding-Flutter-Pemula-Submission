@@ -10,7 +10,8 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TodoScreen extends StatefulWidget {
-  TodoScreen({Key? key}) : super(key:key);
+  TodoScreen({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _TodoScreen();
 }
@@ -20,7 +21,8 @@ class _TodoScreen extends State<TodoScreen> {
   static const String sharedPreferencesKey = 'save_task';
   final dateTimeNow = new DateTime.now();
   late String _listName = 'My Task';
-  late final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  late final GlobalKey<ScaffoldState> _scaffoldKey =
+      new GlobalKey<ScaffoldState>();
   late final GlobalKey<AnimatedListState> _animatedListKey =
       new GlobalKey<AnimatedListState>();
   late TextEditingController _taskNameController = new TextEditingController();
@@ -59,30 +61,30 @@ class _TodoScreen extends State<TodoScreen> {
   late final TextStyle _alertTitleStyle =
       TextStyle(fontWeight: FontWeight.w600, fontSize: 24, color: Colors.black);
 
-
-  void initState(){
+  void initState() {
     loadSharedPreferencesAndData();
     super.initState();
   }
 
-  void loadSharedPreferencesAndData() async{
+  void loadSharedPreferencesAndData() async {
     sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.clear();
     loadData();
   }
 
-  void saveData(){
+  void saveData() {
     List<String> saved = _taskData.map((e) => json.encode(e.toMap())).toList();
     sharedPreferences.setStringList(sharedPreferencesKey, saved);
     print(saved);
   }
 
-  void loadData(){
-    List<String>? savedData = sharedPreferences.getStringList(sharedPreferencesKey);
-    if(savedData != null){
-      _taskData = savedData.map((e) => TodoData.fromMap(json.decode(e))).toList();
-      setState(() {});
-    }
+  void loadData() {
+    List<String> savedData =
+        sharedPreferences.getStringList(sharedPreferencesKey) ?? [];
+    setState(() {
+      _taskData =
+          savedData.map((e) => TodoData.fromMap(json.decode(e))).toList();
+    });
   }
 
   Future<Null> _pickDate(BuildContext context) async {
@@ -202,8 +204,7 @@ class _TodoScreen extends State<TodoScreen> {
                               width: double.infinity,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  if (_dueDate != null &&
-                                      _dueTime != null) {
+                                  if (_dueDate != null && _dueTime != null) {
                                     setState(() {
                                       TodoData todoData = new TodoData(
                                           name: _taskNameController.text
@@ -211,7 +212,13 @@ class _TodoScreen extends State<TodoScreen> {
                                           dueDate: DateFormat.yMEd()
                                               .format(_dueDate!)
                                               .toString(),
-                                          dueTime: DateFormat.jm().format(new DateTime(dateTimeNow.year, dateTimeNow.month, dateTimeNow.day, _dueTime!.hour, _dueTime!.minute)));
+                                          dueTime: DateFormat.jm().format(
+                                              new DateTime(
+                                                  dateTimeNow.year,
+                                                  dateTimeNow.month,
+                                                  dateTimeNow.day,
+                                                  _dueTime!.hour,
+                                                  _dueTime!.minute)));
                                       _taskData.add(todoData);
                                       _animatedListKey.currentState!.insertItem(
                                           _taskData.length - 1,
@@ -374,15 +381,20 @@ class _TodoScreen extends State<TodoScreen> {
                               width: double.infinity,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  if (_dueDate != null &&
-                                      _dueTime != null) {
+                                  if (_dueDate != null && _dueTime != null) {
                                     setState(() {
                                       todoData.name =
                                           _taskNameController.text.toString();
                                       todoData.dueDate = DateFormat.yMEd()
                                           .format(_dueDate!)
                                           .toString();
-                                      todoData.dueTime = DateFormat.jm().format(new DateTime(dateTimeNow.year, dateTimeNow.month, dateTimeNow.day, _dueTime!.hour, _dueTime!.minute));
+                                      todoData.dueTime = DateFormat.jm().format(
+                                          new DateTime(
+                                              dateTimeNow.year,
+                                              dateTimeNow.month,
+                                              dateTimeNow.day,
+                                              _dueTime!.hour,
+                                              _dueTime!.minute));
                                       todoData.isComplete = false;
                                       saveData();
 
@@ -540,8 +552,7 @@ class _TodoScreen extends State<TodoScreen> {
                                       Container(
                                           margin: const EdgeInsets.only(
                                               left: 4, top: 4),
-                                          child: Text(
-                                              todoData.dueDate,
+                                          child: Text(todoData.dueDate,
                                               style: _dateTimeFormatTextStyle)),
                                       Icon(
                                         Icons.circle,

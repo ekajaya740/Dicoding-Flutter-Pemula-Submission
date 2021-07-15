@@ -2,7 +2,7 @@
     package="id.ekajaya740.dicoding_submission">
    <application
         android:label="Roxasium Task"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

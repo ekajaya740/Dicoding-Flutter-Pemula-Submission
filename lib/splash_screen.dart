@@ -27,7 +27,6 @@ class _SplashScreen extends State<SplashScreen>{
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([]);
     return Scaffold(
       body: SafeArea(
         child: Center(

@@ -7,11 +7,12 @@ import 'package:intl/intl.dart';
 import 'package:dicoding_submission/todo_data.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dicoding_submission/info_screen.dart';
 
 class TodoScreen extends StatefulWidget {
   late final String username;
-  TodoScreen({Key? key, required this.username}) : super(key: key);
 
+  TodoScreen({Key? key, required this.username}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _TodoScreen();
@@ -116,6 +117,24 @@ class _TodoScreen extends State<TodoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
+        appBar: AppBar(
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.transparent,
+          actions: [
+            IconButton(
+              splashRadius: 20,
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                    InfoScreen()));
+              },
+              icon: Icon(
+                Icons.info_outlined,
+                color: Colors.white,
+              ),
+            )
+          ],
+        ),
         floatingActionButton: FloatingActionButton(
             elevation: 0,
             onPressed: () {
@@ -256,7 +275,8 @@ class _TodoScreen extends State<TodoScreen> {
               children: [
                 Container(
                     margin: const EdgeInsets.fromLTRB(10, 16, 0, 16),
-                    child: Text('${widget.username}\'s Task',
+                    child: Text(
+                      '${widget.username}\'s Task',
                       textAlign: TextAlign.start,
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 36),

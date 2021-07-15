@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class TodoData{
   String name;
   String dueDate;

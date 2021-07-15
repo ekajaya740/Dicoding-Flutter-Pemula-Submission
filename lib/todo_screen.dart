@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +9,9 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TodoScreen extends StatefulWidget {
-  TodoScreen({Key? key}) : super(key: key);
+  late final String username;
+  TodoScreen({Key? key, required this.username}) : super(key: key);
+
 
   @override
   State<StatefulWidget> createState() => _TodoScreen();
@@ -20,7 +21,6 @@ class _TodoScreen extends State<TodoScreen> {
   late SharedPreferences sharedPreferences;
   static const String sharedPreferencesKey = 'save_task';
   final dateTimeNow = new DateTime.now();
-  late String _listName = 'My Task';
   late final GlobalKey<ScaffoldState> _scaffoldKey =
       new GlobalKey<ScaffoldState>();
   late final GlobalKey<AnimatedListState> _animatedListKey =
@@ -82,6 +82,7 @@ class _TodoScreen extends State<TodoScreen> {
     List<String> savedData =
         sharedPreferences.getStringList(sharedPreferencesKey) ?? [];
     setState(() {
+      widget.username = sharedPreferences.getString('username_data') ?? '';
       _taskData =
           savedData.map((e) => TodoData.fromMap(json.decode(e))).toList();
     });
@@ -255,8 +256,7 @@ class _TodoScreen extends State<TodoScreen> {
               children: [
                 Container(
                     margin: const EdgeInsets.fromLTRB(10, 16, 0, 16),
-                    child: Text(
-                      _listName,
+                    child: Text('${widget.username}\'s Task',
                       textAlign: TextAlign.start,
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 36),

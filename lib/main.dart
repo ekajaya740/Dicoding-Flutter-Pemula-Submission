@@ -1,9 +1,6 @@
 import 'package:dicoding_submission/splash_screen.dart';
-import 'package:dicoding_submission/user_greetings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'info_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -20,7 +17,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.amber,
           textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme)
               .apply(bodyColor: Colors.white, displayColor: Colors.white)),
-      home: UserGreetings(),
+      home: SplashScreen(),
     );
   }
 }

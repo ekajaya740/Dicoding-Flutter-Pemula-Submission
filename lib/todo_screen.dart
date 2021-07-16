@@ -274,7 +274,7 @@ class _TodoScreen extends State<TodoScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                    margin: const EdgeInsets.fromLTRB(10, 16, 0, 16),
+                    margin: const EdgeInsets.fromLTRB(10, 8, 0, 16),
                     child: Text(
                       '${widget.username}\'s Task',
                       textAlign: TextAlign.start,

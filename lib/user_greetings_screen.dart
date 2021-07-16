@@ -52,6 +52,7 @@ class _UserGreetings extends State<UserGreetings> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
+              autofocus: true,
               controller: _usernameController,
               style: _myTextFieldStyle,
               decoration: _myTextFieldInputDecoration,

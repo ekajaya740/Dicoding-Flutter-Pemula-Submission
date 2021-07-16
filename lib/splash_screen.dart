@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:dicoding_submission/user_greetings_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SplashScreen extends StatefulWidget{
@@ -16,7 +15,6 @@ class _SplashScreen extends State<SplashScreen>{
   void initState(){
     super.initState();
     splashScreen();
-
   }
 
   splashScreen() async{
